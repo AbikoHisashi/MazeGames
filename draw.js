@@ -33,8 +33,16 @@ class Field {
         this.cellSize = Math.floor(this.canvas.width / this.len)
         this.cells = new Array(this.len)
         for (let x = 0; x < this.len; x++) this.cells[x] = new Array(this.len).fill(0)
-        this.setRandomWall()
+        this.setUniformIntervalWall()
         this.cells[0][0] = 0
+    }
+
+    setUniformIntervalWall() {
+        this.cells.forEach((array, x) => {
+            array.forEach((cell, y) => {
+                this.cells[x][y] = (x % 2 === 1 && y % 2 === 1) ? 1 : 0
+            })
+        })
     }
 
     setRandomWall() {
