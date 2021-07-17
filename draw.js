@@ -33,15 +33,18 @@ class Field {
         this.cellSize = Math.floor(this.canvas.width / this.len)
         this.cells = new Array(this.len)
         for (let x = 0; x < this.len; x++) this.cells[x] = new Array(this.len).fill(0)
+        this.setRandomWall()
+        this.cells[0][0] = 0
+    }
 
+    setRandomWall() {
         for (let i = 0; i < 300; i++) {
             let x = Math.floor(Math.random() * this.len)
             let y = Math.floor(Math.random() * this.len)
-            //  console.log(x, y)
             this.cells[x][y] = 1
         }
-        this.cells[0][0] = 0
     }
+
     show() {
         ctx.fillStyle = "black"
         for (let x = 0; x < this.len; x++) {
