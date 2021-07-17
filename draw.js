@@ -29,8 +29,8 @@ class Field {
     constructor(ca) {
         this.canvas = ca
         this.player = new Player(this)
-        this.len = 20
-        this.cellSize = Math.floor(this.canvas.width / this.len)
+        this.len = 21
+        this.cellSize = (this.canvas.width / this.len)
         this.cells = new Array(this.len)
         for (let x = 0; x < this.len; x++) this.cells[x] = new Array(this.len).fill(0)
         this.setUniformIntervalWall()
