@@ -40,6 +40,7 @@ class Field {
             //  console.log(x, y)
             this.cells[x][y] = 1
         }
+        this.cells[0][0] = 0
     }
     show() {
         ctx.fillStyle = "black"
@@ -62,11 +63,15 @@ class Player {
     }
     show() {
         ctx.fillStyle = "red"
-        ctx.fillRect(this.x, this.y, this.field.cellSize, this.field.cellSize)
+        ctx.fillRect(this.x * this.field.cellSize, this.y * this.field.cellSize, this.field.cellSize, this.field.cellSize)
     }
     move(x, y) {
-        this.x = (this.x + this.field.canvas.width + x * this.field.cellSize) % this.field.canvas.width
-        this.y = (this.y + this.field.canvas.height + y * this.field.cellSize) % this.field.canvas.height
+        const nextX = (this.x + x + this.field.len) % this.field.len
+        const nextY = (this.y + y + this.field.len) % this.field.len
+        if (this.field.cells[nextX][nextY] === 0) {
+            this.x = nextX
+            this.y = nextY
+        }
     }
 }
 
