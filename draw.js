@@ -1,3 +1,29 @@
+// シードを固定するため　for debug
+// let r = Math.floor(Math.random() * 1000)
+// r = 240
+// Math.random.seed = (function me(s) {
+//     // Xorshift128 (init seed with Xorshift32)
+//     s ^= s << 13; s ^= 2 >>> 17; s ^= s << 5;
+//     let x = 123456789 ^ s;
+//     s ^= s << 13; s ^= 2 >>> 17; s ^= s << 5;
+//     let y = 362436069 ^ s;
+//     s ^= s << 13; s ^= 2 >>> 17; s ^= s << 5;
+//     let z = 521288629 ^ s;
+//     s ^= s << 13; s ^= 2 >>> 17; s ^= s << 5;
+//     let w = 88675123 ^ s;
+//     let t;
+//     Math.random = function () {
+//         t = x ^ (x << 11);
+//         x = y; y = z; z = w;
+//         // >>>0 means 'cast to uint32'
+//         w = ((w ^ (w >>> 19)) ^ (t ^ (t >>> 8))) >>> 0;
+//         return w / 0x100000000;
+//     };
+//     Math.random.seed = me;
+//     return me;
+// })(r);
+// console.log("seed", r)
+
 let mTimer
 let TIMER_INTERVAL = 100
 
@@ -33,16 +59,78 @@ class Field {
         this.cellSize = (this.canvas.width / this.len)
         this.cells = new Array(this.len)
         for (let x = 0; x < this.len; x++) this.cells[x] = new Array(this.len).fill(0)
-        this.setUniformIntervalWall()
+        this.knockingDownMethod()
         this.cells[0][0] = 0
     }
 
+    /** 等間隔に壁を設置する
+     * x,y 座標が奇数のセルを壁にする
+     */
     setUniformIntervalWall() {
         this.cells.forEach((array, x) => {
             array.forEach((cell, y) => {
                 this.cells[x][y] = (x % 2 === 1 && y % 2 === 1) ? 1 : 0
             })
         })
+    }
+
+    /** 棒倒し法で迷路をつくる
+     * 
+     */
+    knockingDownMethod() {
+        this.setUniformIntervalWall()
+        this.knockingDown(1, 1)
+        for (let y = 0; y < this.len; y++) {
+            for (let x = 0; x < this.len; x++) {
+                if (x % 2 == 1 && y % 2 == 1) {
+                    if (this.knockingDown(x, y)) return
+                }
+            }
+        }
+    }
+
+    /** 棒を倒す
+     * 
+     */
+    knockingDown(x, y) {
+        console.log("knockingDown ", x, y)
+        let r = Math.floor(Math.random() * 4)
+        let flag = 1
+        let n = 0
+        while (flag) {
+            n++
+            console.log("r" + r)
+            switch (r) {
+                case 0: { // up
+                    if (y - 1 >= 0 && this.cells[x][y - 1] === 0 && y === 1) {
+                        this.cells[x][y - 1] = 1
+                        flag = 0
+                    }
+                    break
+                } case 1: { // right
+                    if (x + 1 < this.len && this.cells[x + 1][y] === 0) {
+                        this.cells[x + 1][y] = 1
+                        flag = 0
+                    }
+                    break
+                } case 2: { // down
+                    if (y + 1 < this.len && this.cells[x][y + 1] === 0) {
+                        this.cells[x][y + 1] = 1
+                        flag = 0
+                    }
+                    break
+                } case 3: { // left
+                    if (x - 1 >= 0 && this.cells[x - 1][y] === 0) {
+                        this.cells[x - 1][y] = 1
+                        flag = 0
+                    }
+                    break
+                }
+            }
+            r = (r + 1) % 4
+            if (n >= 4) return 1
+        }
+        return 0
     }
 
     setRandomWall() {
